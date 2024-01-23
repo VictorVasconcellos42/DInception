@@ -2,10 +2,11 @@ version: '3'
 
 services:
   nginx:
+    container_name: nginx
+    restart: always
     build:
       context: .
       dockerfile: requirements/nginx/dockerfile
-    container_name: nginx
     depends_on:
       - wordpress
     ports:
@@ -14,5 +15,20 @@ services:
       - ./requirements/nginx/conf/:etc/nginx/http.d/
       - ./requirements/nginx/tools:/etc/nginx/tools
       - wordpress_setting:/var/www/
+  mariadb:
+    container_name: mariadb
     restart: always
+    build:
+      context: .
+      dockerfile: requirements/mariadb/Dockerfile
+      args:
+        - DB_NAME: ${DB_NAME}
+        - DB_USER: ${DB_USER}
+        - DB_PASS: ${DB_PASS}
+        - DB_ROOT: ${DB_ROOT}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-volume:/var/lib/mysql
   
+
