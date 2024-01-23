@@ -25,8 +25,8 @@ re: build
 clean: down
 	@printf "Cleaning ${NAME} Config\n"
 	@docker system prune -a
-	@sudo rm -rf ~/data/wordpress/*
-	@sudo rm -rf ~/data/mariadb/*
+	@sudo rm -rf ~/setting/wordpress/*
+	@sudo rm -rf ~/setting/mariadb/*
 
 fclean:
 	@printf "Delete every docker configurations\n"
@@ -34,8 +34,8 @@ fclean:
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@docker volume rm srcs_mariadb_data
-	@docker volume rm srcs_wordpress_data
+	@docker volume rm srcs_mariadb_settings
+	@docker volume rm srcs_wordpress_settings
 	@sudo rm -rf ~/data
 
 .PHONY: all build down re clean fclean
