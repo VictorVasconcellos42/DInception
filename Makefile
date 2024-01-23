@@ -8,7 +8,7 @@ all: up
 
 up: 
 	@printf "Start New ${NAME} Config\n"
-	@bash srcs/requirements/wordpress/tools/dirCreate.sh
+	@bash srcs/requirements/wordpress/tools/dbCreate.sh
 	${DOCKER} ${ENV_PATH} up -d
 
 down:
@@ -17,7 +17,7 @@ down:
 
 build:
 	@printf "Building ${NAME} Config\n"
-	@bash srcs/requirements/wordpress/tools/dirCreate.sh
+	@bash srcs/requirements/wordpress/tools/dbCreate.sh
 	${DOCKER} ${ENV_PATH} up -d --build
 
 re: build
@@ -36,7 +36,7 @@ fclean:
 	@docker volume prune --force
 	@docker volume rm srcs_mariadb_settings
 	@docker volume rm srcs_wordpress_settings
-	@sudo rm -rf ~/data
+	@sudo rm -rf ~/setting
 
 .PHONY: all build down re clean fclean
 
