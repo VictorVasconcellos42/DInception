@@ -4,6 +4,8 @@ services:
   nginx:
     container_name: nginx
     restart: always
+    networks:
+      - inception
     build:
       context: .
       dockerfile: requirements/nginx/Dockerfile
@@ -12,8 +14,8 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./requirements/nginx/conf/:etc/nginx/http.d/
-      - ./requirements/nginx/tools:/etc/nginx/tools
+      - ./requirements/nginx/conf/:/etc/nginx/http.d/
+      - ./requirements/nginx/tools:/etc/nginx/tools/
       - wordpress_setting:/var/www/
   mariadb:
     container_name: mariadb
@@ -38,32 +40,37 @@ services:
     build:
       context: .
       dockerfile: requirements/wordpress/Dockerfile
+      args:
+          DB_NAME: ${DB_NAME}
+          DB_PASS: ${DB_PASS}
+          DB_USER: ${DB_USER}
+          WP_ADMIN: ${WP_ADMIN}
+          WP_ADMIN_PASS: ${WP_ADMIN_PASS}
+          WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+          WP_USER: ${WP_USER}
+          WP_USER_EMAIL: ${WP_USER_EMAIL}
     depends_on:
       - mariadb
-    args:
-        DB_NAME: ${DB_NAME}
-        DB_PASS: ${DB_PASS}
-        DB_USER: ${DB_USER}
     volumes:
       - wordpress_setting:/var/www/
     ports:
       - "9000:9000"
     networks:
       - inception
-  volumes:
-    wordpress_setting:
-      driver_opts:
-        o: bind
-        type: none
-        device: /home/${USER}/setting/wordpress
-    mariadb_setting:
-      driver_opts:
-        o: bind
-        type: none
-        device: /home/${USER}/setting/mariadb
-  networks:
-    inception:
-      driver: bridge
+volumes:
+  wordpress_setting:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/setting/wordpress
+  mariadb_setting:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/setting/mariadb
+networks:
+  inception:
+    driver: bridge
 
 
   
