@@ -6,7 +6,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: requirements/nginx/dockerfile
+      dockerfile: requirements/nginx/Dockerfile
     depends_on:
         - wordpress
     ports:
@@ -20,15 +20,51 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: requirements/mariadb/dockerfile
+      dockerfile: requirements/mariadb/Dockerfile
       args:
-        - "DB_NAME=${DB_NAME}"
-        - "DB_USER=${DB_USER}"
-        - "DB_PASS=${DB_PASS}"
-        - "DB_ROOT=${DB_ROOT}"
+        DB_NAME: ${DB_NAME}
+        DB_PASS: ${DB_PASS}
+        DB_USER: ${DB_USER}
+        DB_ROOT: ${DB_ROOT}
     ports:
       - "3306:3306"
     volumes:
-      - db-volume:/var/lib/mysql
+      - mariadb_setting:/var/lib/mysql
+    networks:
+      - inception
+  wordpress:
+    container_name: wordpress
+    restart: always
+    build:
+      context: .
+      dockerfile: requirements/wordpress/Dockerfile
+    depends_on:
+      - mariadb
+    args:
+        DB_NAME: ${DB_NAME}
+        DB_PASS: ${DB_PASS}
+        DB_USER: ${DB_USER}
+    volumes:
+      - wordpress_setting:/var/www/
+    ports:
+      - "9000:9000"
+    networks:
+      - inception
+  volumes:
+    wordpress_setting:
+      driver_opts:
+        o: bind
+        type: none
+        device: /home/${USER}/setting/wordpress
+    mariadb_setting:
+      driver_opts:
+        o: bind
+        type: none
+        device: /home/${USER}/setting/mariadb
+  networks:
+    inception:
+      driver: bridge
+
+
   
 
