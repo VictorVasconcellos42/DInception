@@ -1,6 +1,6 @@
 NAME = inception
 
-DOCKER	= @docker-compose -f ./docker-compose.yml
+DOCKER	= @docker-compose -f ./srcs/docker-compose.yml
 
 ENV_PATH = --env-file srcs/.env
 
@@ -8,7 +8,7 @@ all: up
 
 up: 
 	@printf "Start New ${NAME} Config\n"
-	@bash srcs/requirements/wordpress/tools/dbCreate.sh
+	@bash srcs/requirements/wordpress/tools/dirCreate.sh
 	${DOCKER} ${ENV_PATH} up -d
 
 down:
@@ -17,7 +17,7 @@ down:
 
 build:
 	@printf "Building ${NAME} Config\n"
-	@bash srcs/requirements/wordpress/tools/dbCreate.sh
+	@bash srcs/requirements/wordpress/tools/dirCreate.sh
 	${DOCKER} ${ENV_PATH} up -d --build
 
 re: build
@@ -30,12 +30,11 @@ clean: down
 
 fclean:
 	@printf "Delete every docker configurations\n"
-	@docker stop $$(docker ps -qa)
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@docker volume rm srcs_mariadb_settings
-	@docker volume rm srcs_wordpress_settings
+	@docker volume rm srcs_mariadb_setting
+	@docker volume rm srcs_wordpress_setting
 	@sudo rm -rf ~/setting
 
 .PHONY: all build down re clean fclean
